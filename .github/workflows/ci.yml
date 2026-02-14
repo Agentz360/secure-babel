@@ -84,19 +84,19 @@ jobs:
           STRIP_BABEL_VERSION_FLAG: true
       - name: Build Makefile.js
         run: |
-          node ./scripts/pack-script.js
+          node ./scripts/pack-script.ts
       - name: Generate readmes
         run: |
           make generate-readme
       - name: Generate .npmignore
         run: |
-          node scripts/generators/npm-ignore.js
+          node scripts/generators/npm-ignore.ts
       - name: Cleanup fixtures
         run: |
-          node scripts/cleanup-fixtures.js
+          node scripts/cleanup-fixtures.ts
       - name: Ensure cwd does not contain uncommitted changes
         run: |
-          node ./scripts/assert-dir-git-clean.js "\`make build\` and \`node scripts/cleanup-fixtures.js\`"
+          node ./scripts/assert-dir-git-clean.ts "\`make build\` and \`node scripts/cleanup-fixtures.ts\`"
       - uses: actions/upload-artifact@v4
         with:
           name: babel-artifact
@@ -136,7 +136,7 @@ jobs:
           STRIP_BABEL_VERSION_FLAG: true
       - name: Ensure cwd does not contain uncommitted changes
         run: |
-          node ./scripts/assert-dir-git-clean.js build
+          node ./scripts/assert-dir-git-clean.ts build
 
   lint:
     name: Lint
@@ -160,7 +160,7 @@ jobs:
         run: make -j lint-ci check-compat-data
       - name: Ensure cwd does not contain uncommitted changes
         run: |
-          node ./scripts/assert-dir-git-clean.js "lint-ci check-compat-data"
+          node ./scripts/assert-dir-git-clean.ts "lint-ci check-compat-data"
 
   test-coverage:
     name: Test on Node.js Latest (with coverage)
@@ -520,29 +520,6 @@ jobs:
       - name: Test Node.js ${{ matrix.node-version }}
         run: node test/runtime-integration/node.cjs
 
-  eslint8-test:
-    name: Test @babel/eslint-* with ESLint 8.0.0
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Use Node.js latest
-        uses: actions/setup-node@v4
-        with:
-          node-version: latest
-          check-latest: true
-          cache: "yarn"
-      - name: Install
-        run: yarn install
-      - uses: actions/download-artifact@v4
-        with:
-          name: babel-artifact
-      - name: Downgrade ESLint to 8.0.0
-        run: yarn up eslint@8.0.0
-      - name: Run babel/eslint tests
-        run: node ./node_modules/.bin/jest eslint
-
   test262-prepare:
     name: test262 - Prepare for running in parallel
     runs-on: ubuntu-latest
@@ -703,4 +680,4 @@ jobs:
         run: yarn install
       - name: Ensure npm packages exist
         run: |
-          node ./scripts/ensure-packages-exist.js --check-only
+          node ./scripts/ensure-packages-exist.ts --check-only
