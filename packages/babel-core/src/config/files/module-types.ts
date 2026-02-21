@@ -129,7 +129,7 @@ export default function* loadCodeDefault(
       }
     // fall through: require() failed due to ESM or TLA, try import()
     case "auto esm":
-      if ((async ??= yield* isAsync())) {
+      if (async ?? (yield* isAsync())) {
         const promise = isTS
           ? ensureTsSupport(filepath, ext, () => loadMjsFromPath(filepath))
           : loadMjsFromPath(filepath);
@@ -207,7 +207,6 @@ function ensureTsSupport<T>(
 
 function getTSPreset(filepath: string) {
   try {
-    // eslint-disable-next-line import/no-extraneous-dependencies
     return require("@babel/preset-typescript");
   } catch (error) {
     if (error.code !== "MODULE_NOT_FOUND") throw error;
